@@ -5,6 +5,7 @@ import { createStandardNavigator } from 'standard-navigation';
 
 import type { NavigatorContentProps } from '../../../standard-navigation/types';
 import { useBackBehaviorInitialRoute } from '../../../standard-navigation/useBackBehaviorInitialRoute';
+import { useNonStackAnchorWarning } from '../../../standard-navigation/useNonStackAnchorWarning';
 import { usePreloadPlaceholderRoutes } from '../../../standard-navigation/usePreloadPlaceholderRoutes';
 import { useVisibleTabsWithRedirect } from '../../../standard-navigation/useVisibleTabsWithRedirect';
 import { NavigationHelpersContext, type TabRouterOptions } from '../../native';
@@ -54,6 +55,7 @@ function BottomTabNavigatorContent({
     backBehaviorInitialRoute,
     navigation: use(NavigationHelpersContext),
   });
+  useNonStackAnchorWarning();
   const { visibleRoutes, focusedIndex, focusedFallbackRoute } = useVisibleTabsWithRedirect({
     routes: state.routes,
     routeNames,
