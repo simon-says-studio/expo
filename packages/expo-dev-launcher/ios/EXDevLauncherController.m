@@ -292,6 +292,7 @@ static const NSTimeInterval EXDevLauncherDefaultRequestTimeout = 10.0;
 {
   NSAssert([NSThread isMainThread], @"This function must be called on main thread");
 
+  [EXDevLauncherLoadingOverlay.shared hide];
   [self invalidateDevMenuApp];
 
   self.networkInterceptor = nil;
@@ -429,6 +430,18 @@ static const NSTimeInterval EXDevLauncherDefaultRequestTimeout = 10.0;
   _possibleManifestURL = expoUrl;
   BOOL isEASUpdate = [self isEASUpdateURL:expoUrl];
 
+  // Fetching the manifest and then the bundle can take many seconds on a slow or tunneled dev
+  // server, and nothing else on screen says the app is working on it. Cover the screen until the
+  // project's first content appears; a failure always takes the overlay down first.
+  [EXDevLauncherLoadingOverlay.shared showFor:expoUrl];
+  void (^callerOnError)(NSError *) = onError;
+  onError = ^(NSError *error) {
+    [EXDevLauncherLoadingOverlay.shared hide];
+    if (callerOnError) {
+      callerOnError(error);
+    }
+  };
+
   // an update url requires a matching projectUrl
   // if one isn't provided, default to the configured project url in Expo.plist
   if (isEASUpdate && projectUrl == nil && _updatesInterface) {
@@ -458,6 +471,7 @@ static const NSTimeInterval EXDevLauncherDefaultRequestTimeout = 10.0;
                                                                                       installationID:installationID];
 
   void (^launchReactNativeApp)(void) = ^{
+    [EXDevLauncherLoadingOverlay.shared setStatus:NSLocalizedString(@"Loading the JavaScript bundle…", nil)];
     self->_shouldPreferUpdatesInterfaceSourceUrl = NO;
     RCTDevLoadingViewSetEnabled(NO);
     [self.recentlyOpenedAppsRegistry appWasOpened:[expoUrl absoluteString] queryParams:devLauncherUrl.queryParams manifest:nil];
@@ -473,6 +487,7 @@ static const NSTimeInterval EXDevLauncherDefaultRequestTimeout = 10.0;
   };
 
   void (^launchExpoApp)(NSURL *, EXManifestsManifest *) = ^(NSURL *bundleURL, EXManifestsManifest *manifest) {
+    [EXDevLauncherLoadingOverlay.shared setStatus:NSLocalizedString(@"Loading the JavaScript bundle…", nil)];
     NSURL *resolvedBundleURL = [EXDevLauncherURLHelper bundleURL:bundleURL withResolvedPlatform:RCTPlatformName];
     self->_shouldPreferUpdatesInterfaceSourceUrl = !manifest.isUsingDeveloperTool;
     RCTDevLoadingViewSetEnabled(manifest.isUsingDeveloperTool);
