@@ -1,5 +1,14 @@
 # notification-tester
 
+## 1.0.12
+
+### Patch Changes
+
+- Updated dependencies.
+  - native-component-list@0.0.12
+  - test-suite@1.0.12
+  - expo-router@58.0.26
+
 ## 1.0.11
 
 ### Patch Changes

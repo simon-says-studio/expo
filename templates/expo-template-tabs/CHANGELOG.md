@@ -1,5 +1,12 @@
 # expo-template-tabs
 
+## 58.0.27
+
+### Patch Changes
+
+- Updated dependencies.
+  - expo-router@58.0.26
+
 ## 58.0.26
 
 ### Patch Changes

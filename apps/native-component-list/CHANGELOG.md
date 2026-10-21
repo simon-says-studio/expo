@@ -1,5 +1,14 @@
 # native-component-list
 
+## 0.0.12
+
+### Patch Changes
+
+- Updated dependencies. ([#52000](https://github.com/expo/expo/pull/52000))
+  - expo-glass-effect@58.0.5
+  - test-suite@1.0.12
+  - expo-router@58.0.26
+
 ## 0.0.11
 
 ### Patch Changes

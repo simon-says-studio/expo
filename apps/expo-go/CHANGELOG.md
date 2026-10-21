@@ -1,5 +1,12 @@
 # @expo/home
 
+## 0.0.13
+
+### Patch Changes
+
+- Updated dependencies.
+  - expo-router@58.0.26
+
 ## 0.0.12
 
 ### Patch Changes
