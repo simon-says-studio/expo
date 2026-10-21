@@ -2,11 +2,18 @@
   "name": "expo-embedding",
   "version": "0.0.0-dev",
   "private": true,
-  "description": "Native dependency metadata for the Expo embedding prototype",
+  "description": "Expo embedding prototype for existing SwiftUI apps",
   "license": "MIT",
   "type": "module",
+  "bin": {
+    "expo-embedding": "bin/expo-embedding.js"
+  },
   "files": [
-    "build"
+    "bin",
+    "build",
+    "scripts/codegen.cjs",
+    "templates",
+    "scripts/embed-frameworks.sh"
   ],
   "engines": {
     "node": ">=22"
@@ -17,6 +24,7 @@
     "test": "jest --runInBand"
   },
   "devDependencies": {
+    "@bacons/xcode": "1.0.0-alpha.33",
     "esbuild": "0.28.1",
     "jest": "30.5.2",
     "minimatch": "9.0.9"
