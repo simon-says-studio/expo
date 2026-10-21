@@ -8,20 +8,26 @@ export function findAppRoot(directory: string): string {
       readdirSync(candidate).some(
         (name) =>
           name.endsWith('.xcodeproj') && existsSync(join(candidate, name, 'project.pbxproj'))
-      )
+      ) ||
+      existsSync(join(candidate, 'settings.gradle.kts')) ||
+      existsSync(join(candidate, 'settings.gradle'))
     )
       return candidate;
     const parent = dirname(candidate);
     if (parent === candidate) {
       throw new Error(
-        'Could not find an Xcode project. Run npx expo-embedding from your native app directory or one of its subdirectories.'
+        'Could not find an Xcode project or Android Gradle settings. Run npx expo-embedding from your native app directory or one of its subdirectories.'
       );
     }
     candidate = parent;
   }
 }
 
-export function scaffoldExpoProject(root: string, versions: Record<string, string>): void {
+export function scaffoldExpoProject(
+  root: string,
+  versions: Record<string, string>,
+  platform: 'ios' | 'android' = 'ios'
+): void {
   const directory = join(root, 'expo');
   if (!existsSync(join(directory, 'package.json'))) {
     if (existsSync(directory) && readdirSync(directory).length !== 0) {
@@ -31,6 +37,15 @@ export function scaffoldExpoProject(root: string, versions: Record<string, strin
     }
     mkdirSync(join(directory, 'Native'), { recursive: true });
     for (const [name, contents] of Object.entries(starterFiles)) {
+      if (platform === 'android' && name.startsWith('Native/')) continue;
+      if (platform === 'android' && name === 'react-native.config.js') {
+        writeFileSync(
+          join(directory, name),
+          "module.exports = { project: { android: { sourceDir: '..', appName: 'app' } } };\n",
+          { flag: 'wx' }
+        );
+        continue;
+      }
       writeFileSync(join(directory, name), contents, { flag: 'wx' });
     }
     writeFileSync(
